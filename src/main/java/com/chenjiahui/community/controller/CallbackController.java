@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class CallbackController {
 
@@ -25,7 +27,8 @@ public class CallbackController {
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code,
-                            @RequestParam(name="state") String state)
+                           @RequestParam(name="state") String state,
+                           HttpServletRequest request)
     {
         System.out.println("callback in");
         System.out.println("client_id"+client_id);
@@ -41,6 +44,15 @@ public class CallbackController {
         GithubUser user=githubProvider.okHttpGet(access_token);
         System.out.println("user="+user);
         System.out.println("username="+user.getName());
-        return  "index";
+
+        if(user!=null){
+            //登陆成功
+            request.getSession().setAttribute("user",user);
+            return "redirect:/";
+        }else{
+            //登陆失败
+            return "redirect:/";
+        }
+
     }
 }
