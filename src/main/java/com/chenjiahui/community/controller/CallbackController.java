@@ -1,7 +1,9 @@
 package com.chenjiahui.community.controller;
 
+import com.chenjiahui.community.Model.User;
 import com.chenjiahui.community.dto.AccessToken;
 import com.chenjiahui.community.dto.GithubUser;
+import com.chenjiahui.community.mapper.UserMapper;
 import com.chenjiahui.community.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,11 +11,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 @Controller
 public class CallbackController {
 
+    @Autowired
+    private UserMapper userMapper;
     @Autowired
     private GithubProvider githubProvider;
     @Value("${github.client.id}")
@@ -28,7 +35,7 @@ public class CallbackController {
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code,
                            @RequestParam(name="state") String state,
-                           HttpServletRequest request)
+                           HttpServletResponse response)
     {
         System.out.println("callback in");
         System.out.println("client_id"+client_id);
@@ -41,13 +48,21 @@ public class CallbackController {
         accessToken.setRedirect_uri(client_url);
         accessToken.setState(state);
         String access_token=githubProvider.okHttpPost(accessToken);
-        GithubUser user=githubProvider.okHttpGet(access_token);
-        System.out.println("user="+user);
-        System.out.println("username="+user.getName());
+        GithubUser githubUser=githubProvider.okHttpGet(access_token);
+        System.out.println("user="+githubUser);
+        System.out.println("username="+githubUser.getName());
 
-        if(user!=null){
+        if(githubUser!=null){
+            User user=new User();
+            String token=UUID.randomUUID().toString();
+            user.setAccoutId(String.valueOf(githubUser.getId()));
+            user.setName(githubUser.getName());
+            user.setToken(token);
+            user.setGmt_create(System.currentTimeMillis());
+            user.setGmt_modified(user.getGmt_create());
+            userMapper.insert(user);
+            response.addCookie(new Cookie("token",token));
             //登陆成功
-            request.getSession().setAttribute("user",user);
             return "redirect:/";
         }else{
             //登陆失败
