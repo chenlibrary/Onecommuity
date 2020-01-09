@@ -1,0 +1,32 @@
+body{
+    background-color: #8c8c8c;
+}
+.main{
+    margin: 25px;
+    background-color:#ffffff;
+}
+.issuebutton{
+    float:right;
+}
+.media-object{
+    width: 40px;
+    height: 40px;
+}
+.media-foot span{
+    padding: 10px;
+}
+.boxp{
+    padding: 0;
+}
+.intext{
+   padding: 5px 0;
+}
+.spanfont{
+    cursor: pointer;
+}
+.commentTwo{
+    padding-left: 48px;
+}
+.tag{
+    margin-right: 5px;
+}

@@ -9,15 +9,6 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/bootstrap.min.js" type="application/javascript" ></script>
 </head>
-<script type="application/javascript">
-    window.onload= function () {
-        var closable=window.localStorage.getItem("closable");
-        if(closable=="true"){
-            window.close();
-            window.localStorage.removeItem("closable");
-        }
-    }
-</script>
 <body>
 <div th:insert="~{navtop :: nav}"></div>
 <div class="container-fluid main">
@@ -30,7 +21,7 @@
                 </a>
             </div>
             <div class="media-body">
-                <a th:href="@{'/questionDetails?questionId='+${q.id}}"><h4 class="media-heading" th:text="${q.title}"></h4></a>
+                <h4 class="media-heading" th:text="${q.title}"></h4>
                 <span th:text="${q.description}"></span><br/>
                 <span th:text="${q.commentCount}"></span>回复，<span th:text="${q.viewCount}"></span>浏览，<span th:text="${#dates.format(q.gmtCreate, 'yyyy-MM-dd')}"></span>时间
             </div>
@@ -38,23 +29,23 @@
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li th:if="${qul.showFirstPage}">
-                    <a th:href="@{'/?pageNum='+${qul.firstPage}}" aria-label="Previous">
+                    <a th:href="@{'/selectProblem?pageNum='+${qul.firstPage}+'&select='+${select}}" aria-label="Previous">
                         <span aria-hidden="true">首页</span>
                     </a>
                 </li>
                 <li th:if="${qul.showPrevious}">
-                    <a th:href="@{'/?pageNum='+${qul.previousPage}}" aria-label="Previous">
+                    <a th:href="@{'/selectProblem?pageNum='+${qul.previousPage}+'&select='+${select}}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
-                <li  th:each="p:${qul.pages}" th:class="${qul.page==p}?'active':''"><a th:href="@{'/?pageNum='+${p}}" th:text="${p}"></a></li>
+                <li  th:each="p:${qul.pages}" th:class="${qul.page==p}?'active':''"><a th:href="@{'/selectProblem?pageNum='+${p}+'&select='+${select}}" th:text="${p}"></a></li>
                 <li  th:if="${qul.showNext}">
-                    <a th:href="@{'/?pageNum='+${qul.nextPage}}"   aria-label="Next">
+                    <a th:href="@{'/selectProblem?pageNum='+${qul.nextPage}+'&select='+${select}}"   aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
                 <li th:if="${qul.showEndPage}">
-                    <a th:href="@{'/?pageNum='+${qul.endPage}}" aria-label="Previous">
+                    <a th:href="@{'/selectProblem?pageNum='+${qul.endPage}+'&select='+${select}}" aria-label="Previous">
                         <span aria-hidden="true">尾页</span>
                     </a>
                 </li>

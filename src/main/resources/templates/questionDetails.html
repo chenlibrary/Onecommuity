@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>社区</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/community.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="/js/bootstrap.min.js" type="application/javascript" ></script>
+    <script src="/js/community.js" type="application/javascript" ></script>
+</head>
+<body>
+<div th:insert="~{navtop :: nav}"></div>
+<div class="container-fluid main">
+    <!--左边栏-->
+    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <h4 th:text="${qu.title}"></h4>
+            作者：<span th:text="${qu.user.name}"></span>|
+            发布时间：<span th:text="${#dates.format(qu.gmtCreate, 'yyyy-MM-dd')}"></span>|
+            阅读数：<span th:text="${qu.viewCount}"></span>
+                <hr>
+        <h4 th:text="${qu.description}"></h4>
+        <hr>
+        <span class="label label-info tag" th:each="tags:${qu.tag.split(',')}" th:text="${tags}"></span>
+        <hr>
+        <li th:if="${session.user}!=null">
+            <a th:href="@{'/publish/'+${qu.id}}" th:if="${qu.user.accontId}==${session.user.accontId}"><span class="glyphicon glyphicon-pencil" >编辑</span></a>
+        </li>
+        <div th:if="${session.user}!=null">
+            <hr th:if="${qu.user.accontId}==${session.user.accontId}">
+        </div>
+        <h4><span th:text="${commentUserList.size()}"></span>个回复</h4>
+        <hr>
+        <div  class="col-lg-12 col-md-12 col-sm-12 col-xs-12 boxp"   th:each="comment,commentUser:${commentUserList}">
+            <div class="media-left" >
+                <img class="media-object" th:if="${comment.user}!=null" th:src="${comment.user.avatarUrl}" alt="加载失败">
+            </div>
+            <div class="media-body">
+                <span th:text="${comment.user.name}"></span>
+                <br>
+                <span th:text="${comment.content}"></span>
+            </div>
+            <div class="media-foot">
+                <span class="glyphicon glyphicon-thumbs-up spanfont"></span>
+                <span class="glyphicon glyphicon-comment spanfont" th:data-id="${comment.id}" onclick="commentTwoHideAndShow(this)"></span>
+                <span th:text="${#dates.format(qu.gmtCreate, 'yyyy-MM-dd')}" class="issuebutton"></span>
+            </div>
+
+            <!--二级回复-->
+            <div  class="commentTwo collapse" th:id="${'comment-'+comment.id}">
+<!--                    <div class="media-left" >-->
+<!--                        <img class="media-object" th:if="${comment.user}!=null" th:src="${comment.user.avatarUrl}" alt="加载失败">-->
+<!--                    </div>-->
+<!--                    <div class="media-body">-->
+<!--                        <span th:text="${comment.user.name}"></span>-->
+<!--                        <br>-->
+<!--                        <span th:text="${comment.content}"></span>-->
+<!--                    </div>-->
+<!--                    <div class="media-foot">-->
+<!--                        <span th:text="${#dates.format(qu.gmtCreate, 'yyyy-MM-dd')}" class="issuebutton"></span>-->
+<!--                    </div>-->
+<!--                    <hr>-->
+                    <input type="text" class="form-control" placeholder="Text input" id="twoComment">
+                    <button th:id="${'replyTow-'+comment.id}" type="button" class="btn btn-success" style="float: right;" onclick="doComment(this)">回复</button>
+            </div>
+            <hr>
+        </div>
+        <div id="edit" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 boxp">
+            <div class="media-left">
+                <img class="media-object" th:if="${qu.user}!=null" th:src="${qu.user.avatarUrl}" alt="加载失败">
+            </div>
+            <div class="media-body">
+               <span th:text="${qu.user.name}"></span>
+            </div>
+            <div class="intext">
+                <input type="text" class="hidden" id="questionId" name="questionId" th:if="${qu.id}!=null" th:value="${qu.id}">
+                <textarea id="textareaText" class="form-control" rows="5"></textarea>
+            </div>
+            <button type="button" class="btn btn-success" style="float: right;" onclick="doPost()">回复</button>
+        </div>
+    </div>
+    <!--右边栏-->
+    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <h4>发起问题人</h4>
+        <div class="media-left">
+                <img class="media-object" th:if="${qu.user}!=null" th:src="${qu.user.avatarUrl}" alt="加载失败">
+        </div>
+        <div class="media-body">
+            <a href="#"><span th:text="${qu.user.name}"></span></a>
+        </div>
+        <h4>相关问题</h4>
+                <p th:each="mq:${moreQuestion}">
+                    ~~<a th:href="@{'/questionDetails?questionId='+${mq.id}}"   th:text="${mq.title}">
+                    </a>
+                </p>
+
+
+        <p ></p>
+    </div>
+</div>
+
+</body>
+</html>
